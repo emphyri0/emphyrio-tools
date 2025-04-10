@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Verlengkabel & Stekker Calculator | Maldoy</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffffff;
+      color: #333;
+      padding: 2rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #003366;
+    }
+    h1::after {
+      content: "";
+      display: block;
+      width: 50px;
+      height: 3px;
+      background-color: #f9b000;
+      margin-top: 8px;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    input, select {
+      padding: 0.5rem;
+      width: 100%;
+      max-width: 300px;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.7rem 1.5rem;
+      background-color: #f9b000;
+      color: #003366;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #f2f8ff;
+      border-left: 5px solid #f9b000;
+      font-size: 1.1rem;
+      display: none;
+    }
+    .info {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #fff8e1;
+      border-left: 5px solid #f9b000;
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Verlengkabel & Stekker Calculator</h1>
+  <p>Bereken de juiste kabeldikte en stekker voor uw machine.</p>
+
+  <label for="vermogen">Machinevermogen (Watt)</label>
+  <input type="number" id="vermogen" placeholder="bv. 3500">
+
+  <label for="lengte">Kabellengte (m)</label>
+  <input type="number" id="lengte" placeholder="bv. 25">
+
+  <label for="spanning">Spanning</label>
+  <select id="spanning">
+    <option value="230">230V</option>
+    <option value="400">400V</option>
+  </select>
+
+  <button onclick="berekenKabel()">Bereken kabel</button>
+
+  <div class="result" id="resultaat"></div>
+
+  <div class="info">
+    ℹ️ <strong>Technische uitleg:</strong><br>
+    Deze tool berekent de minimale aanbevolen kabeldikte en stekkertype voor uw machine op basis van vermogen, lengte en spanning. Bij extreem hoge vermogens of lengtes krijgt u een waarschuwing om professionele aansluiting te voorzien.<br><br>
+    <strong>Formule:</strong><br>
+    Stroom (A) = Vermogen (Watt) ÷ Spanning (Volt)<br>
+    Op basis van de stroomsterkte en lengte wordt de kabeldikte gekozen.
+  </div>
+
+  <script>
+    function berekenKabel() {
+      const vermogen = parseFloat(document.getElementById('vermogen').value);
+      const lengte = parseFloat(document.getElementById('lengte').value);
+      const spanning = parseFloat(document.getElementById('spanning').value);
+      const resultDiv = document.getElementById('resultaat');
+
+      if (isNaN(vermogen) || isNaN(lengte) || isNaN(spanning) || vermogen <= 0 || lengte <= 0) {
+        resultDiv.innerHTML = "Gelieve alle velden correct in te vullen.";
+        resultDiv.style.display = "block";
+        return;
+      }
+
+      if (vermogen > 20000) {
+        resultDiv.innerHTML = "⚠️ Dit vermogen is te hoog voor gebruik met verlengkabels. Voorzie een vaste aansluiting.";
+        resultDiv.style.display = "block";
+        return;
+      }
+
+      if (lengte > 100) {
+        resultDiv.innerHTML = "⚠️ Voor kabels langer dan 100 meter raden wij een vaste installatie aan.";
+        resultDiv.style.display = "block";
+        return;
+      }
+
+      const stroom = vermogen / spanning; // A
+      let dikte = 1.5;
+      if (stroom > 10 || lengte > 25) dikte = 2.5;
+      if (stroom > 16 || lengte > 50) dikte = 4;
+      if (stroom > 25 || lengte > 75) dikte = 6;
+
+      let stekker = "Schuko (16A)";
+      if (stroom > 16) stekker = "CEE 16A";
+      if (stroom > 32) stekker = "CEE 32A";
+
+      resultDiv.innerHTML = `
+        <strong>Resultaat:</strong><br>
+        Benodigde kabeldikte: <strong>${dikte} mm²</strong><br>
+        Aanbevolen stekker: <strong>${stekker}</strong><br>
+        Geschatte stroom: ${stroom.toFixed(1)} A
+      `;
+      resultDiv.style.display = "block";
+    }
+  </script>
+</body>
+</html>

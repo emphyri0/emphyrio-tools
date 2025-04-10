@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Omtrek → Diameter Calculator | Maldoy</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffffff;
+      color: #333;
+      padding: 2rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #003366;
+    }
+    h1::after {
+      content: "";
+      display: block;
+      width: 50px;
+      height: 3px;
+      background-color: #f9b000;
+      margin-top: 8px;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    input {
+      padding: 0.5rem;
+      width: 100%;
+      max-width: 300px;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.7rem 1.5rem;
+      background-color: #f9b000;
+      color: #003366;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #f2f8ff;
+      border-left: 5px solid #f9b000;
+      font-size: 1.1rem;
+      display: none;
+    }
+    .info {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #fff8e1;
+      border-left: 5px solid #f9b000;
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Omtrek → Diameter Calculator</h1>
+  <p>Reken eenvoudig om van omtrek naar diameter.</p>
+
+  <label for="omtrek">Omtrek (mm)</label>
+  <input type="number" id="omtrek" placeholder="bv. 100">
+
+  <button onclick="berekenDiameter()">Bereken Diameter</button>
+
+  <div class="result" id="resultaat"></div>
+
+  <div class="info">
+    ℹ️ <strong>Technische uitleg:</strong><br>
+    De diameter wordt berekend op basis van de formule: <strong>Diameter = Omtrek ÷ π (3,1416)</strong>.<br>
+    Dit is handig wanneer u enkel de omtrek kunt meten, bijvoorbeeld bij buizen, assen of cirkelvormige onderdelen.<br>
+    Deze tool helpt u snel de juiste diameter te bepalen.
+  </div>
+
+  <script>
+    function berekenDiameter() {
+      const omtrek = parseFloat(document.getElementById('omtrek').value);
+      const resultDiv = document.getElementById('resultaat');
+
+      if (isNaN(omtrek) || omtrek <= 0) {
+        resultDiv.innerHTML = "Gelieve een geldige omtrek in te vullen.";
+        resultDiv.style.display = "block";
+        return;
+      }
+
+      const diameter = (omtrek / Math.PI).toFixed(2);
+      resultDiv.innerHTML = `Omtrek: ${omtrek} mm → Diameter: <strong>${diameter} mm</strong>`;
+      resultDiv.style.display = "block";
+    }
+  </script>
+</body>
+</html>

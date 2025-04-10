@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Omrekentool Druk & Volume | Maldoy</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffffff;
+      color: #333;
+      padding: 2rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #003366;
+    }
+    h1::after {
+      content: "";
+      display: block;
+      width: 50px;
+      height: 3px;
+      background-color: #f9b000;
+      margin-top: 8px;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    input, select {
+      padding: 0.5rem;
+      width: 100%;
+      max-width: 300px;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.7rem 1.5rem;
+      background-color: #f9b000;
+      color: #003366;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #f2f8ff;
+      border-left: 5px solid #f9b000;
+      font-size: 1.1rem;
+      display: none;
+    }
+    .info {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>Omrekentool Druk & Volume</h1>
+  <p>Reken eenvoudig druk- en volume-eenheden om. Handig voor gebruik bij hogedrukreinigers, compressoren en pompen.</p>
+
+  <label for="waarde">Waarde</label>
+  <input type="number" id="waarde" placeholder="bv. 150">
+
+  <label for="eenheid">Eenheid</label>
+  <select id="eenheid">
+    <option value="">Selecteer</option>
+    <option value="bar">Bar (Europese standaard)</option>
+    <option value="psi">PSI (Amerikaanse eenheid)</option>
+    <option value="mpa">MPa (MegaPascal)</option>
+    <option value="kpa">kPa (KiloPascal)</option>
+    <option value="atm">Atm (Atmosfeer)</option>
+    <option value="gallon">US Gallon (Volume)</option>
+    <option value="liter">Liter (Volume)</option>
+  </select>
+
+  <button onclick="omrekenen()">Reken om</button>
+
+  <div class="result" id="resultaat"></div>
+
+  <div class="info" id="info"></div>
+
+  <script>
+    function omrekenen() {
+      const waarde = parseFloat(document.getElementById('waarde').value);
+      const eenheid = document.getElementById('eenheid').value;
+      const resultDiv = document.getElementById('resultaat');
+      const infoDiv = document.getElementById('info');
+
+      if (isNaN(waarde) || !eenheid) {
+        resultDiv.innerHTML = "Gelieve alle velden correct in te vullen.";
+        resultDiv.style.display = "block";
+        infoDiv.innerHTML = "";
+        return;
+      }
+
+      let resultaat = "";
+      let info = "";
+
+      if (eenheid === 'bar') {
+        resultaat += `${waarde} bar = ${(waarde * 14.5).toFixed(2)} PSI<br>`;
+        resultaat += `${waarde} bar = ${(waarde * 100000).toLocaleString()} Pascal<br>`;
+        resultaat += `${waarde} bar = ${(waarde * 0.1).toFixed(2)} MPa<br>`;
+        resultaat += `${waarde} bar = ${(waarde * 100).toFixed(2)} kPa<br>`;
+        resultaat += `${waarde} bar = ${(waarde * 0.9869).toFixed(2)} atm<br>`;
+        info = "Bar is de Europese standaard-eenheid voor druk. 1 Bar = 100.000 Pascal.";
+      }
+      else if (eenheid === 'psi') {
+        resultaat += `${waarde} PSI = ${(waarde / 14.5).toFixed(2)} bar<br>`;
+        resultaat += `${waarde} PSI = ${(waarde * 6894.76).toLocaleString()} Pascal<br>`;
+        info = "PSI (Pound per Square Inch) wordt veel gebruikt bij Amerikaanse machines.";
+      }
+      else if (eenheid === 'mpa') {
+        resultaat += `${waarde} MPa = ${(waarde * 10).toFixed(2)} bar<br>`;
+        resultaat += `${waarde} MPa = ${(waarde * 145).toFixed(2)} PSI<br>`;
+        info = "MPa (MegaPascal) is een SI-eenheid voor hoge druk.";
+      }
+      else if (eenheid === 'kpa') {
+        resultaat += `${waarde} kPa = ${(waarde / 100).toFixed(2)} bar<br>`;
+        resultaat += `${waarde} kPa = ${(waarde / 6.895).toFixed(2)} PSI<br>`;
+        info = "kPa (KiloPascal) wordt vaak gebruikt voor lage druk.";
+      }
+      else if (eenheid === 'atm') {
+        resultaat += `${waarde} atm = ${(waarde / 0.9869).toFixed(2)} bar<br>`;
+        resultaat += `${waarde} atm = ${(waarde * 14.7).toFixed(2)} PSI<br>`;
+        info = "Atm (atmosfeer) is de gemiddelde luchtdruk op zeeniveau.";
+      }
+      else if (eenheid === 'gallon') {
+        resultaat += `${waarde} US gallon = ${(waarde * 3.79).toFixed(2)} liter<br>`;
+        info = "1 US gallon = 3,79 liter. Vaak gebruikt bij Amerikaanse toestellen.";
+      }
+      else if (eenheid === 'liter') {
+        resultaat += `${waarde} liter = ${(waarde / 3.79).toFixed(2)} US gallon<br>`;
+        info = "Liter is de standaard eenheid voor volume in Europa.";
+      }
+
+      resultDiv.innerHTML = resultaat;
+      resultDiv.style.display = "block";
+      infoDiv.innerHTML = info;
+    }
+  </script>
+</body>
+</html>

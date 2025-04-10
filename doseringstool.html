@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Verdunningscalculator | Maldoy</title>
+    <style>
+        /* === Plaats hier EXACT dezelfde CSS als in het vorige voorbeeld === */
+        /* === (body, h1, h1::after, label, input, button, .result, .info) === */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            color: #333;
+            padding: 2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #003366; /* Maldoy Blauw */
+        }
+        h1::after {
+            content: "";
+            display: block;
+            width: 50px;
+            height: 3px;
+            background-color: #f9b000; /* Maldoy Geel/Oranje */
+            margin-top: 8px;
+        }
+        label {
+            display: block;
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+        /* Kleine aanpassing voor ratio-inputs naast elkaar */
+        .ratio-input {
+            display: inline-block;
+            width: calc(50% - 1rem); /* Maak ruimte voor ':' */
+            max-width: 100px;
+        }
+        .ratio-separator {
+            display: inline-block;
+            padding: 0 0.5rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+            vertical-align: middle; /* Lijn ':' uit */
+            margin-top: 0.3rem; /* Match input margin */
+            padding-top: 0.5rem; /* Match input padding */
+        }
+        input {
+            padding: 0.5rem;
+            width: 100%;
+            max-width: 300px; /* Standaard max breedte */
+            margin-top: 0.3rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* Voorkomt dat padding de breedte vergroot */
+        }
+        button {
+            margin-top: 1.5rem; /* Iets meer ruimte na de ratio */
+            padding: 0.7rem 1.5rem;
+            background-color: #f9b000; /* Maldoy Geel/Oranje */
+            color: #003366; /* Maldoy Blauw */
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #f2f8ff; /* Lichtblauw */
+            border-left: 5px solid #f9b000; /* Maldoy Geel/Oranje */
+            font-size: 1.1rem;
+            display: none; /* Start verborgen */
+        }
+        .info {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #fff8e1; /* Lichtgeel */
+            border-left: 5px solid #003366; /* Maldoy Blauw */
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>Verdunningscalculator</h1>
+    <p>Bereken eenvoudig hoeveel concentraat en water u nodig heeft.</p>
+
+    <label for="volume">Gewenste Totale Hoeveelheid (Liter)</label>
+    <input type="number" id="volume" placeholder="bv. 5">
+
+    <label>Verdunningsratio (Concentraat : Water)</label>
+    <div>
+        <input type="number" id="ratio_concentraat" placeholder="bv. 1" class="ratio-input">
+        <span class="ratio-separator">:</span>
+        <input type="number" id="ratio_water" placeholder="bv. 10" class="ratio-input">
+    </div>
+
+    <button onclick="berekenVerdunning()">Bereken Hoeveelheden</button>
+
+    <div class="result" id="resultaat"></div>
+
+    <div class="info">
+        ℹ️ <strong>Technische uitleg:</strong><br>
+        Vul de gewenste totale hoeveelheid van de oplossing in (in liters) en de verdunningsratio.<br>
+        Een ratio van <strong>1 : 10</strong> betekent 1 deel concentraat op 10 delen water.<br>
+        De tool berekent dan precies hoeveel milliliter (ml) concentraat en hoeveel milliliter (ml) water u moet mengen om de gewenste totale hoeveelheid te bekomen met de juiste verhouding. Dit is handig voor reinigingsmiddelen, pesticiden, etc.
+    </div>
+
+    <script>
+        function berekenVerdunning() {
+            const volumeLiter = parseFloat(document.getElementById('volume').value);
+            const ratioConcentraat = parseFloat(document.getElementById('ratio_concentraat').value);
+            const ratioWater = parseFloat(document.getElementById('ratio_water').value);
+            const resultDiv = document.getElementById('resultaat');
+
+            // Validatie
+            if (isNaN(volumeLiter) || volumeLiter <= 0 ||
+                isNaN(ratioConcentraat) || ratioConcentraat <= 0 || // Concentraat moet > 0 zijn
+                isNaN(ratioWater) || ratioWater < 0) { // Water kan 0 zijn (puur), maar niet negatief
+                resultDiv.innerHTML = "Gelieve geldige, positieve waarden in te vullen voor volume en ratio (concentraat > 0, water >= 0).";
+                resultDiv.style.display = "block";
+                resultDiv.style.borderLeftColor = "#D32F2F"; /* Rode rand voor fout */
+                 resultDiv.style.background = "#FFEBEE"; /* Lichte rode achtergrond */
+                return;
+            }
+
+            const totaalDelen = ratioConcentraat + ratioWater;
+            const volumeML = volumeLiter * 1000;
+
+            const hoeveelheidConcentraat = (volumeML / totaalDelen) * ratioConcentraat;
+            const hoeveelheidWater = (volumeML / totaalDelen) * ratioWater; // Of: volumeML - hoeveelheidConcentraat
+
+            // Resultaat tonen
+            resultDiv.innerHTML = `Voor ${volumeLiter} L oplossing met ratio ${ratioConcentraat}:${ratioWater} heeft u nodig:<br>
+                                   Concentraat: <strong>${hoeveelheidConcentraat.toFixed(1)} ml</strong><br>
+                                   Water: <strong>${hoeveelheidWater.toFixed(1)} ml</strong>`;
+             resultDiv.style.display = "block";
+             resultDiv.style.borderLeftColor = "#f9b000"; /* Herstel naar standaardkleur */
+             resultDiv.style.background = "#f2f8ff"; /* Herstel naar standaardkleur */
+        }
+    </script>
+</body>
+</html>

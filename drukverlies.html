@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Drukverlies Calculator | Maldoy</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffffff;
+      color: #333;
+      padding: 2rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #003366;
+    }
+    h1::after {
+      content: "";
+      display: block;
+      width: 50px;
+      height: 3px;
+      background-color: #f9b000;
+      margin-top: 8px;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    input, select {
+      padding: 0.5rem;
+      width: 100%;
+      max-width: 300px;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.7rem 1.5rem;
+      background-color: #f9b000;
+      color: #003366;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #f2f8ff;
+      border-left: 5px solid #f9b000;
+      font-size: 1.1rem;
+      display: none;
+    }
+    .info {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #fff8e1;
+      border-left: 5px solid #f9b000;
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Drukverlies Calculator</h1>
+  <p>Technisch nauwkeurige berekening van drukverlies over uw hogedrukslang (synthetisch rubber).</p>
+
+  <label for="diameter">Inwendige slangdiameter (mm)</label>
+  <input type="number" id="diameter" placeholder="bv. 10">
+
+  <label for="debiet">Debiet (l/min)</label>
+  <input type="number" id="debiet" placeholder="bv. 30">
+
+  <label for="lengte">Slanglengte (m)</label>
+  <input type="number" id="lengte" placeholder="bv. 20">
+
+  <label for="toevoer">Toevoerdruk (bar)</label>
+  <input type="number" id="toevoer" placeholder="bv. 150">
+
+  <button onclick="berekenDrukverlies()">Bereken drukverlies</button>
+
+  <div class="result" id="resultaat"></div>
+
+  <div class="info">
+    ℹ️ <strong>Technische uitleg:</strong><br>
+    Deze berekening is gebaseerd op de Darcy–Weisbach formule, met een vaste wrijvingsfactor van <strong>0,0220</strong> voor flexibele synthetisch rubber hogedrukslangen.<br>
+    Het drukverlies is afhankelijk van het debiet, de lengte van de slang en de inwendige diameter. Bij lange slangen, hoge debieten of kleine diameters zal het drukverlies toenemen.<br><br>
+    Houd hiermee rekening om te vermijden dat de effectieve werkdruk te laag wordt voor uw toepassing.<br>
+    Bekijk ons aanbod hogedrukslangen op <a href="https://www.maldoy.com/nl/shop/search?searchTerm=teknojet" target="_blank">maldoy.com</a>.
+  </div>
+
+  <script>
+    function berekenDrukverlies() {
+      const diameterInput = document.getElementById('diameter').value;
+      const debietInput = document.getElementById('debiet').value;
+      const lengteInput = document.getElementById('lengte').value;
+      const toevoerInput = document.getElementById('toevoer').value;
+      const resultDiv = document.getElementById('resultaat');
+
+      if (!diameterInput || !debietInput || !lengteInput || !toevoerInput) {
+        resultDiv.innerHTML = "Gelieve alle velden correct in te vullen.";
+        resultDiv.style.display = "block";
+        return;
+      }
+
+      const diameter = parseFloat(diameterInput);
+      const debiet = parseFloat(debietInput);
+      const lengte = parseFloat(lengteInput);
+      const toevoer = parseFloat(toevoerInput);
+
+      if (isNaN(diameter) || isNaN(debiet) || isNaN(lengte) || isNaN(toevoer) || diameter <= 0 || debiet <= 0 || lengte <= 0 || toevoer <= 0) {
+        resultDiv.innerHTML = "Gelieve geldige positieve cijfers in te vullen.";
+        resultDiv.style.display = "block";
+        return;
+      }
+
+      const rho = 1000; // kg/m³
+      const d = diameter / 1000; // m
+      const Q = debiet / 1000 / 60; // m³/s
+      const v = Q / (Math.PI * d * d / 4); // m/s
+      const f = 0.0220; // vaste wrijvingsfactor synthetisch rubber
+
+      const deltaP = f * (lengte / d) * (rho * v * v / 2); // Pa
+      const verliesBar = (deltaP / 100000).toFixed(2);
+      const effectief = Math.max(0, (toevoer - verliesBar)).toFixed(2);
+
+      resultDiv.innerHTML = `
+        <strong>Resultaat:</strong><br>
+        Debiet: ${debiet} l/min | Diameter: ${diameter} mm | Lengte: ${lengte} m<br>
+        Wrijvingsfactor: 0.0220 (synthetisch rubber)<br>
+        Geschat drukverlies: <strong>${verliesBar} bar</strong><br>
+        Effectieve druk na verlies: <strong>${effectief} bar</strong><br>
+      `;
+      resultDiv.style.display = "block";
+    }
+  </script>
+</body>
+</html>
